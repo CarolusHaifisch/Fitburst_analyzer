@@ -65,9 +65,7 @@ for file in filfiles:
 print(fils_to_run)
 
 toa_list = []
-#npz_files = os.listdir(r'C:\Users\ktsan\Desktop\Research\NPZ_files')
-npz_files = [i for i in os.listdir(npz_path) if '.npz' in i]
-print('test')
+
 #for file_run in fils_to_run:
 tstart_list = []
 procs=[]
@@ -76,10 +74,14 @@ def singlecut_append(ftr, fstart, fdm, ft):
 if __name__ == '__main__':
     for i in range(len(files)):
         proc= Process(target=singlecut_append,
-                      args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i]))
+                      args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i],))
         procs.append(proc)
     tstart_list = np.array(tstart_list)
 procs = []
+
+#npz_files = os.listdir(r'C:\Users\ktsan\Desktop\Research\NPZ_files')
+npz_files = [i for i in os.listdir(npz_path) if '.npz' in i]
+print('test')
 def fitpipe(i):
     os.system('python fitburst_pipeline.py '  +' --outfile '+ npz_files[i] )
 """Multiprocessing code"""
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     for i in range(len(npz_files)):
         filparts = npz_files[i].split('_')
         filtime.append(filparts[3])
-        proc = Process(target=fitpipe, args=(i))
+        proc = Process(target=fitpipe, args=(i,))
         procs.append(proc)
         proc.start()
         
@@ -112,7 +114,7 @@ def make_tim(i):
             mjd_errors.append(1e-6)
 if __name__ == '__main__':
     for i in range(len(results_files)):
-        proc = Process(target=make_tim, args=(i))
+        proc = Process(target=make_tim, args=(i,))
         procs.append(proc)
         proc.start()
     for proc in procs:
