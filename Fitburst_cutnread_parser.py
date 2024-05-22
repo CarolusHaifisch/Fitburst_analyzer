@@ -10,6 +10,7 @@ import Fitburst_singlecut_mod as fbsc
 import argparse
 import numpy as np
 import json
+from multiprocessing import Process
 # Load files for analysis (Read in names of candidates)
 #files = glob.glob(r'\\wsl.localhost\Ubuntu\home\ktsang45\*.fil')
 
@@ -47,10 +48,11 @@ files = os.listdir(pulse_folder)
 filtime = []
 fildm = []
 
-for file in files:
-    filparts = file.split('_')
-    filtime.append(filparts[4])
-    fildm.append(filparts[6])
+if __name__ == '__main__':
+    for file in files:
+        filparts = file.split('_')
+        filtime.append(filparts[4])
+        fildm.append(filparts[6])
     
 filmjd = str(int(float(filparts[2])))
 
