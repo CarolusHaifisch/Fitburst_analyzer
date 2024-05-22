@@ -70,21 +70,37 @@ npz_files = [i for i in os.listdir(npz_path) if '.npz' in i]
 print('test')
 #for file_run in fils_to_run:
 tstart_list = []
-for i in range(len(files)):
-    tstart_list.append(fbsc.singlecut(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i]))
-tstart_list = np.array(tstart_list)
-for i in range(len(npz_files)):
-    print(npz_files[i])
-
-    #os.system('python fitburst_pipeline.py ' + r'\\wsl.localhost\Ubuntu\home\ktsang45\NPZ_files' + r'\\'+ file + ' --outfile')
+procs=[]
+def singlecut_append(ftr, fstart, fdm, ft):
+    tstart_list.append(fbsc.singlecut(ftr, fstart, fdm, ft))
+if __name__ == '__main__':
+    for i in range(len(files)):
+        proc= Process(target=singlecut_append,
+                      args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i]))
+        procs.append(proc)
+    tstart_list = np.array(tstart_list)
+procs = []
+def fitpipe(i):
     os.system('python fitburst_pipeline.py '  +' --outfile '+ npz_files[i] )
+"""Multiprocessing code"""
+if __name__ == '__main__':
+    for i in range(len(npz_files)):
+        filparts = npz_files[i].split('_')
+        filtime.append(filparts[3])
+        proc = Process(target=fitpipe, args=(i))
+        procs.append(proc)
+        proc.start()
+        
+    for proc in procs:
+        proc.join()
     
 """ Some code for reading the TOA from the results json file"""
 results_files = [i for i in os.listdir(npz_path) if '.json' in i]
 results_toa = []
 ref_freqs = []
 mjd_errors = []
-for i in range(len(results_files)):
+procs = []
+def make_tim(i):
     with open(results_files[i], 'r') as f:
         data = json.load(f)
         results_toa.append((data['model_parameters']['arrival_time'][0]-0.5)/86400)
@@ -94,6 +110,13 @@ for i in range(len(results_files)):
             mjd_errors.append(data['fit_statistics']['bestfit_uncertainties']['arrival_time'][0])
         else:
             mjd_errors.append(1e-6)
+if __name__ == '__main__':
+    for i in range(len(results_files)):
+        proc = Process(target=make_tim, args=(i))
+        procs.append(proc)
+        proc.start()
+    for proc in procs:
+        proc.join()
 print("Results_TOA", results_toa)
 filtime = [float(i) for i in filtime]
 filtime = np.array(filtime)/86400
