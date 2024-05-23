@@ -53,8 +53,8 @@ def splitfil_name(f):
     filtime.append(filparts[4])
     fildm.append(filparts[6])
 
-procs = []
 if __name__ == '__main__':
+    pool = multiprocessing.Pool()
     for file in files:
         proc = Process(target=splitfil_name, args = (file,))
         procs.append(proc)
