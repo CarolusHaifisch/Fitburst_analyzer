@@ -10,7 +10,7 @@ import Fitburst_singlecut_mod as fbsc
 import argparse
 import numpy as np
 import json
-from multiprocessing import Process, Pool
+from multiprocessing import Process, Pool, Manager
 # Load files for analysis (Read in names of candidates)
 #files = glob.glob(r'\\wsl.localhost\Ubuntu\home\ktsang45\*.fil')
 
@@ -55,14 +55,18 @@ def splitfil_name(f, filtime, fildm):
     fildm.append(filparts[6])
 
 if __name__ == '__main__':
-    pool = Pool()
-    print('test1')
-    for file in files:
-        pool.apply_async(splitfil_name, args = (file, filtime, fildm,))  
+    with Manager() as manager:
+        filtime = manager.list()
+        fildm = manager.list()
+        pool = Pool()
+        print('test1')
+        for file in files:
+            pool.apply_async(splitfil_name, args = (file, filtime, fildm,))  
+        pool.close()
+        pool.join()
+        filtime = list(filtime)
+        fildm = list(fildm)
         print('Final filtime' + str(filtime))
-    pool.close()
-    pool.join()
-    
 filmjd = str(int(float(files[0].split('_')[2])))
 
 #filfiles = glob.glob(r'\\wsl.localhost\Ubuntu\home\ktsang45\*.fil')
@@ -100,8 +104,6 @@ def fitpipe(i):
 if __name__ == '__main__':
     pool = Pool()
     for i in range(len(npz_files)):
-        filparts = npz_files[i].split('_')
-        filtime.append(filparts[3])
         pool.apply_async(fitpipe, args=(i,))
     pool.close()
     pool.join()
