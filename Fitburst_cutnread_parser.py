@@ -10,7 +10,7 @@ import Fitburst_singlecut_mod as fbsc
 import argparse
 import numpy as np
 import json
-from multiprocessing import Process, Pool 
+from multiprocessing import Process, Pool
 # Load files for analysis (Read in names of candidates)
 #files = glob.glob(r'\\wsl.localhost\Ubuntu\home\ktsang45\*.fil')
 
@@ -54,13 +54,11 @@ def splitfil_name(f):
     fildm.append(filparts[6])
 
 if __name__ == '__main__':
-    pool = multiprocessing.Pool()
+    pool = Pool()
     for file in files:
-        proc = Process(target=splitfil_name, args = (file,))
-        procs.append(proc)
-        proc.start()            
-    for proc in procs:
-        proc.join()
+        pool.apply_async(splitfil_name, args = (file,))        
+    pool.close()
+    pool.join()
     
 filmjd = str(int(float(files[0].split('_')[2])))
 
@@ -76,18 +74,17 @@ toa_list = []
 
 #for file_run in fils_to_run:
 tstart_list = []
-procs=[]
 def singlecut_append(ftr, fstart, fdm, ft):
     tstart_list.append(fbsc.singlecut(ftr, fstart, fdm, ft))
 if __name__ == '__main__':
+    pool = Pool()
     for i in range(len(files)):
-        proc= Process(target=singlecut_append,
+        pool.apply_async(singlecut_append,
                       args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i],))
-        procs.append(proc)
-    for proc in procs:
-        proc.join()
+    pool.close()
+    pool.join()
     tstart_list = np.array(tstart_list)
-procs = []
+
 
 #npz_files = os.listdir(r'C:\Users\ktsan\Desktop\Research\NPZ_files')
 npz_files = [i for i in os.listdir(npz_path) if '.npz' in i]
@@ -96,22 +93,19 @@ def fitpipe(i):
     os.system('python fitburst_pipeline.py '  +' --outfile '+ npz_files[i] )
 """Multiprocessing code"""
 if __name__ == '__main__':
+    pool = Pool()
     for i in range(len(npz_files)):
         filparts = npz_files[i].split('_')
         filtime.append(filparts[3])
-        proc = Process(target=fitpipe, args=(i,))
-        procs.append(proc)
-        proc.start()
-        
-    for proc in procs:
-        proc.join()
+        pool.apply_async(fitpipe, args=(i,))
+    pool.close()
+    pool.join()
     
 """ Some code for reading the TOA from the results json file"""
 results_files = [i for i in os.listdir(npz_path) if '.json' in i]
 results_toa = []
 ref_freqs = []
 mjd_errors = []
-procs = []
 def make_tim(i):
     with open(results_files[i], 'r') as f:
         data = json.load(f)
@@ -123,12 +117,11 @@ def make_tim(i):
         else:
             mjd_errors.append(1e-6)
 if __name__ == '__main__':
+    pool = Pool()
     for i in range(len(results_files)):
-        proc = Process(target=make_tim, args=(i,))
-        procs.append(proc)
-        proc.start()
-    for proc in procs:
-        proc.join()
+        pool.apply_async(make_tim, args=(i,))
+    pool.close()
+    pool.join()
 print("Results_TOA", results_toa)
 filtime = [float(i) for i in filtime]
 filtime = np.array(filtime)/86400
