@@ -84,15 +84,18 @@ tstart_list = []
 def singlecut_append(ftr, fstart, fdm, ft):
     tstart_list.append(fbsc.singlecut(ftr, fstart, fdm, ft))
 if __name__ == '__main__':
-    pool = Pool()
-    print('filtime ' + str(len(filtime)))
-    print('files ' + str(len(files)))
-    for i in range(len(files)):
-        pool.apply_async(singlecut_append,
-                      args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i],))
-    pool.close()
-    pool.join()
-    tstart_list = np.array(tstart_list)
+    with Manager() as manager:
+        tstart_list = manager.list()
+        pool = Pool()
+        print('filtime ' + str(len(filtime)))
+        print('files ' + str(len(files)))
+        for i in range(len(files)):
+            pool.apply_async(singlecut_append,
+                             args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i],))
+        pool.close()
+        pool.join()
+        tstart_list = list(tstart_list)
+        tstart_list = np.array(tstart_list)
 
 
 #npz_files = os.listdir(r'C:\Users\ktsan\Desktop\Research\NPZ_files')
@@ -124,11 +127,19 @@ def make_tim(i):
         else:
             mjd_errors.append(1e-6)
 if __name__ == '__main__':
-    pool = Pool()
-    for i in range(len(results_files)):
-        pool.apply_async(make_tim, args=(i,))
-    pool.close()
-    pool.join()
+    with Manager() as manager:
+        results_toa = manager.list()
+        ref_freqs = manager.list()
+        mjd_errors = manager.list()
+        pool = Pool()
+        for i in range(len(results_files)):
+            pool.apply_async(make_tim, args=(i,))
+        pool.close()
+        pool.join()
+        results_toa = list(results_toa)
+        ref_freqs = list(ref_freqs)
+        mjd_errors = list(mjd_errors)
+    
 print("Results_TOA", results_toa)
 filtime = [float(i) for i in filtime]
 filtime = np.array(filtime)/86400
