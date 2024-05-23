@@ -10,7 +10,7 @@ import Fitburst_singlecut_mod as fbsc
 import argparse
 import numpy as np
 import json
-from multiprocessing import Process
+from multiprocessing import Process, Pool 
 # Load files for analysis (Read in names of candidates)
 #files = glob.glob(r'\\wsl.localhost\Ubuntu\home\ktsang45\*.fil')
 
@@ -48,13 +48,21 @@ files = os.listdir(pulse_folder)
 filtime = []
 fildm = []
 
+def splitfil_name(f):
+    filparts = file.split('_')
+    filtime.append(filparts[4])
+    fildm.append(filparts[6])
+
+procs = []
 if __name__ == '__main__':
     for file in files:
-        filparts = file.split('_')
-        filtime.append(filparts[4])
-        fildm.append(filparts[6])
+        proc = Process(target=splitfil_name, args = (file,))
+        procs.append(proc)
+        proc.start()            
+    for proc in procs:
+        proc.join()
     
-filmjd = str(int(float(filparts[2])))
+filmjd = str(int(float(files[0].split('_')[2])))
 
 #filfiles = glob.glob(r'\\wsl.localhost\Ubuntu\home\ktsang45\*.fil')
 filfiles = glob.glob(fils_path + r'/*.fil')
@@ -76,6 +84,8 @@ if __name__ == '__main__':
         proc= Process(target=singlecut_append,
                       args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i],))
         procs.append(proc)
+    for proc in procs:
+        proc.join()
     tstart_list = np.array(tstart_list)
 procs = []
 
