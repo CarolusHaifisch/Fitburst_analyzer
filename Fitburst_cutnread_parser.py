@@ -48,15 +48,18 @@ files = os.listdir(pulse_folder)
 filtime = []
 fildm = []
 
-def splitfil_name(f):
-    filparts = file.split('_')
+def splitfil_name(f, filtime, fildm):
+    filparts = f.split('_')
     filtime.append(filparts[4])
+    print(filtime)
     fildm.append(filparts[6])
 
 if __name__ == '__main__':
     pool = Pool()
+    print('test1')
     for file in files:
-        pool.apply_async(splitfil_name, args = (file,))        
+        pool.apply_async(splitfil_name, args = (file, filtime, fildm,))  
+        print('Final filtime' + str(filtime))
     pool.close()
     pool.join()
     
@@ -78,6 +81,8 @@ def singlecut_append(ftr, fstart, fdm, ft):
     tstart_list.append(fbsc.singlecut(ftr, fstart, fdm, ft))
 if __name__ == '__main__':
     pool = Pool()
+    print('filtime ' + str(len(filtime)))
+    print('files ' + str(len(files)))
     for i in range(len(files)):
         pool.apply_async(singlecut_append,
                       args=(fils_to_run[0], float(filtime[i])-0.5, float(fildm[i]), filtime[i],))
