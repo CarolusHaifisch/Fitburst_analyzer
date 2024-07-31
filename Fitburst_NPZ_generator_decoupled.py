@@ -65,7 +65,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     fbt = fbt.dedisperse(130)
     fbt = fbt.downsample(downsamp,8)
     fbt = fbt.normalise()
-
+    import pdb; pdb.set_trace()
     zoom_mid_sample = int(t_block/2/fbh.tsamp/downsamp)
     zoom_window = 1 #second
     zoom_window_samples = int(zoom_window/fbh.tsamp/downsamp)
