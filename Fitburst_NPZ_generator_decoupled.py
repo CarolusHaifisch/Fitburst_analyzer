@@ -25,7 +25,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     fbh = fbfile.header
     downsamp=8 
     # Define variables
-    t_block = 10
+    t_block = 4
     nsamps = int(t_block/fbh.tsamp)
     nsamps = nsamps-nsamps%downsamp
     #t_start = 396.3
