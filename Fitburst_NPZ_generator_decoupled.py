@@ -25,7 +25,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     fbh = fbfile.header
     downsamp=8 
     # Define variables
-    t_block = 10
+    t_block = 5
     nsamps = int(t_block/fbh.tsamp)
     nsamps = nsamps-nsamps%downsamp
     #t_start = 396.3
@@ -63,8 +63,8 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     # Identify bad channels for masking and dedisperse data if needed
     #import pdb; pdb.set_trace()
     fbt = fbt.dedisperse(130)
-    fbt = fbt.normalise()
     fbt = fbt.downsample(downsamp,8)
+    fbt = fbt.normalise()
 
     zoom_mid_sample = t_block/2/fbh.tsamp/downsamp
     zoom_window = 1 #second
