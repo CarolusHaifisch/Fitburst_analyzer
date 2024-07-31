@@ -25,7 +25,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     fbh = fbfile.header
     downsamp=8 
     # Define variables
-    t_block = 4
+    t_block = 10
     nsamps = int(t_block/fbh.tsamp)
     nsamps = nsamps-nsamps%downsamp
     #t_start = 396.3
@@ -66,6 +66,11 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     fbt = fbt.normalise()
     fbt = fbt.downsample(downsamp,8)
 
+    zoom_mid_sample = t_block/2/fbh.tsamp/downsamp
+    zoom_window = 1 #second
+    zoom_window_samples = zoom_window/fbh.tsamp/downsamp
+    fbt_zoom = fbt[:, int(zoom_mid_sample - zoom_window_samples):int(zoom_mid_sample + zoom_window_samples)]
+    fbt = fbt_zoom
 
     # Plot data and save
     #plt.imshow(fbt, aspect='auto')
