@@ -25,7 +25,7 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     fbh = fbfile.header
     downsamp=8 
     # Define variables
-    t_block = 5
+    t_block = 10
     nsamps = int(t_block/fbh.tsamp)
     nsamps = nsamps-nsamps%downsamp
     #t_start = 396.3
@@ -65,7 +65,6 @@ def singlecut(fil_name, t_start, disp_measure, fil_time, t_origin, isddp=True):
     fbt = fbt.dedisperse(130)
     fbt = fbt.downsample(downsamp,8)
     fbt = fbt.normalise()
-    import pdb; pdb.set_trace()
     zoom_mid_sample = int(t_block/2/fbh.tsamp/downsamp)
     zoom_window = 1 #second
     zoom_window_samples = int(zoom_window/fbh.tsamp/downsamp)
@@ -165,4 +164,4 @@ print('test')
 #for file_run in fils_to_run:
 print('filstorun length ' + str(len(fils_to_run)) + 'filtime length ' + str(len(filtime)) + 'fildm length ' + str(len(fildm)) + 'tstart length ' +str(len(tstart_list)))
 print('Index '+ str(ind))
-singlecut(fils_to_run[ind], float(filtime[ind])-2, float(fildm[ind]), float(filtime[ind]), float(tstart_list[ind]))
+singlecut(fils_to_run[ind], float(filtime[ind])-5, float(fildm[ind]), float(filtime[ind]), float(tstart_list[ind]))
