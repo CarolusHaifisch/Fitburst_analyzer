@@ -2,7 +2,7 @@
 """
 Created on Mon May 27 14:58:08 2024
 
-@author: ktsan
+@author: Karl Tsang
 """
 import os
 import argparse
@@ -46,12 +46,9 @@ for i in range(len(results_files)):
                                                            +'_'+str(results_files[i].split('_')[-1].removesuffix('.json'))
                                                            +'.json').removeprefix('results_fitburst_'))
 
-
-
 filtime = [float(i) for i in filtime]
 filtime = np.array(filtime)/86400
 
-    
 # Call fitburst_pipeline.py on the .npz files and iterate over them
 for i in range(len(tstart_list)):    
     toa_list.append(float(tstart_list[i])+float(filtime[i])+float(results_toa[i]))

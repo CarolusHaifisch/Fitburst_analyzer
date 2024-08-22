@@ -2,7 +2,7 @@
 """
 Created on Wed May 22 12:37:22 2024
 
-@author: ktsan
+@author: Karl Tsang
 """
 import os
 import argparse

@@ -2,7 +2,7 @@
 """
 Created on Thu May  9 14:34:19 2024
 Final version before removing debug test statements
-@author: ktsan
+@author: Karl Tsang, Adam Dong
 """
 import glob
 import argparse
